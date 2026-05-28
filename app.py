@@ -24,7 +24,7 @@ def load_rag():
         embedding_function=embeddings
     )
     retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
-    client = Groq(api_key=st.secrets["st.secrets["GROQ_API_KEY"]"])
+    client = Groq(api_key=st.secrets["GROQ_API_KEY"])
     return retriever, client
 
 retriever, client = load_rag()
