@@ -13,29 +13,57 @@ vectorstore = Chroma(
 # Increased k to 6 for better candidate pool
 retriever = vectorstore.as_retriever(search_kwargs={"k": 6})
 
-# Groq client — replace with your actual key
+# Groq client
 client = Groq(api_key=os.environ.get("GROQ_API_KEY", ""))
+
+# Scheme keyword detection
+SCHEME_KEYWORDS = {
+    "pm_kisan": ["kisan", "pm-kisan", "pmkisan", "కిసాన్", "కిసాన"],
+    "ayushman_bharat": ["ayushman", "ayushman bharat", "ఆయుష్మాన్", "ఆయుష్మాన"],
+    "mgnrega": ["mgnrega", "nrega", "manrega"],
+    "pm_awas_yojana": ["awas", "pmay", "awas yojana", "ఆవాస్"],
+    "atal_pension": ["atal", "pension", "అటల్"],
+}
 
 def detect_language(text: str) -> str:
     telugu_chars = sum(1 for c in text if '\u0C00' <= c <= '\u0C7F')
     return "telugu" if telugu_chars > 2 else "english"
 
+def detect_scheme(query: str) -> str:
+    query_lower = query.lower()
+    print(f"DEBUG detecting scheme for: {repr(query_lower)}")
+    for scheme, keywords in SCHEME_KEYWORDS.items():
+        for kw in keywords:
+            if kw.lower() in query_lower:
+                print(f"DEBUG matched: {scheme} via keyword: {kw}")
+                return scheme
+    print("DEBUG no scheme matched")
+    return None
+
 def answer_query(query: str) -> dict:
-    docs = retriever.invoke(query)
     lang = detect_language(query)
+    scheme = detect_scheme(query)
 
-    # Filter using 'scheme' metadata key which has clean names
-    if lang == "telugu":
-        filtered = [d for d in docs if d.metadata.get("scheme", "").endswith("_telugu")]
-        if not filtered:
-            filtered = docs
+    # Build targeted search
+    if scheme and lang == "telugu":
+        target = f"{scheme}_telugu"
+        docs = vectorstore.similarity_search(query, k=6, filter={"scheme": target})
+        if not docs:
+            docs = vectorstore.similarity_search(query, k=6, filter={"scheme": {"$contains": "_telugu"}})
+    elif scheme and lang == "english":
+        docs = vectorstore.similarity_search(query, k=6, filter={"scheme": scheme})
+        if not docs:
+            docs = vectorstore.similarity_search(query, k=6)
+    elif lang == "telugu":
+        docs = vectorstore.similarity_search(query, k=6, filter={"scheme": {"$contains": "_telugu"}})
     else:
-        filtered = [d for d in docs if not d.metadata.get("scheme", "").endswith("_telugu")]
-        if not filtered:
-            filtered = docs
+        docs = vectorstore.similarity_search(query, k=6)
 
-    context = "\n\n".join([doc.page_content for doc in filtered])
-    sources = list(set([doc.metadata.get("scheme", "unknown") for doc in filtered]))
+    if not docs:
+        docs = vectorstore.similarity_search(query, k=6)
+
+    context = "\n\n".join([doc.page_content for doc in docs])
+    sources = list(set([doc.metadata.get("scheme", "unknown") for doc in docs]))
 
     prompt = f"""You are a helpful assistant explaining Indian government schemes to rural citizens.
 Answer the question using ONLY the context below.
@@ -57,22 +85,22 @@ Answer:"""
     return {
         "answer": response.choices[0].message.content,
         "sources": sources,
-        "chunks_used": len(filtered)
+        "chunks_used": len(docs)
     }
 
 # Test block
 if __name__ == "__main__":
     test_queries = [
-        "పీఎం కిసాన్ పథకం అర్హత ఏమిటి?",
+        "పీఎం కిసాన్ పథకం అంటే ఏమిటి?",
         "What is PM Kisan scheme and who is eligible?",
         "ఆయుష్మాన్ భారత్ అర్హత ఏమిటి?",
         "How much money does PM Kisan give per year?",
-        "అటల్ పెన్షన్ యోజన ఏ వయసులో చేరవచ్చు?"
+        "అటల్ పెన్షన్ యోజన వయసులో చేరవచ్చు?"
     ]
-
     for query in test_queries:
         print(f"\nQuery: {query}")
         result = answer_query(query)
         print(f"Answer: {result['answer']}")
         print(f"Sources: {result['sources']}")
+        print(f"Chunks used: {result['chunks_used']}")
         print("-" * 50)

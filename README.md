@@ -190,7 +190,7 @@
 
 **Add your Groq API key to `.streamlit/secrets.toml`:**
 
-**GROQ\_API\_KEY = "gsk\_Oqo8YLQHLrueVTmShSKuWGdyb3FYOho4Q5LGa6nvwa5RjqcFDpwv"**
+**GROQ\_API\_KEY = "your\_grok\_key"**
 
 
 
