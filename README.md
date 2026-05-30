@@ -64,7 +64,7 @@
 
 **| Test queries run | 20 |**
 
-**| Retrieval accuracy | 65% (13/20) |**
+**| Retrieval accuracy | 100% (20/20) |**
 
 **| Languages supported | Telugu, English |**
 
