@@ -31,13 +31,10 @@ def detect_language(text: str) -> str:
 
 def detect_scheme(query: str) -> str:
     query_lower = query.lower()
-    print(f"DEBUG detecting scheme for: {repr(query_lower)}")
     for scheme, keywords in SCHEME_KEYWORDS.items():
         for kw in keywords:
             if kw.lower() in query_lower:
-                print(f"DEBUG matched: {scheme} via keyword: {kw}")
                 return scheme
-    print("DEBUG no scheme matched")
     return None
 
 def answer_query(query: str) -> dict:
