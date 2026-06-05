@@ -1,17 +1,8 @@
-**# 🏛️ Prajavani AI — Government Schemes Assistant**
+# 🏛️ Prajavani AI — Government Schemes Assistant
 
+🔴 **Live Demo:** https://prajavani-ai-d7qkupntlgx87r92jrvqwg.streamlit.app
 
-
-**A bilingual RAG chatbot that answers questions about Indian government** 
-
-**welfare schemes in Telugu and English.**
-
-
-
-**Built for rural Telugu-speaking citizens who cannot navigate** 
-
-**government websites.**
-
+A bilingual RAG chatbot that answers questions about Indian government welfare schemes in Telugu and English. Built for rural Telugu-speaking citizens who cannot navigate government websites.
 
 
 **---**
@@ -178,7 +169,7 @@
 
 **```bash**
 
-**git clone https://github.com/YOUR\_USERNAME/prajavani-ai**
+**git clone https://github.com/Git169-hub/prajavani-ai**
 
 **cd prajavani-ai**
 
@@ -280,15 +271,8 @@
 
 
 
-**## 👤 Author**
-
-
-
-**\*\*Razak Shaik\*\***  
-
-**VIT-AP University | CS Final Year**  
-
-**\[LinkedIn](https://linkedin.com/in/YOUR\_PROFILE) |** 
-
-**\[GitHub](https://github.com/YOUR\_USERNAME)**
+## 👤 Author
+**Razak Shaik**
+VIT-AP University | CS Final Year
+[LinkedIn](https://linkedin.com/in/razakshaik) | [GitHub](https://github.com/Git169-hub)
 
