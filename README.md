@@ -1,6 +1,7 @@
 # 🏛️ Prajavani AI — Government Schemes Assistant
 
 🔴 **Live Demo:** https://prajavani-ai-d7qkupntlgx87r92jrvqwg.streamlit.app
+![Prajavani AI Demo](demo.png)
 
 A bilingual RAG chatbot that answers questions about Indian government welfare schemes in Telugu and English. Built for rural Telugu-speaking citizens who cannot navigate government websites.
 
